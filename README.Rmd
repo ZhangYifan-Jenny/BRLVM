@@ -1,0 +1,79 @@
+---
+title: "BRLVM"
+output: github_document
+---
+
+**BRLVM** (Bayesian Regularized Latent Variable Modeling) is an R package for flexible Bayesian regularization of latent variable models.The package was developed as the software implementation accompanying **Yifan Zhang's PhD thesis**:
+
+implements Partially Confirmatory Latent Variable Modelling (PCLVM) developed for Zhang Yifan’s PhD thesis:
+
+> *Bayesian Regularization for Latent Variable Modeling: A Unified Framework and Prior Comparison*
+> The University of Hong Kong
+
+BRLVM builds on the partially confirmatory factor analysis (PCFA) framework implemented in the **LAWBL** package. The original PCFA framework incorporates Bayesian regularization for factor loadings and residual covariance structures. BRLVM extends this framework by introducing regularization of factor correlation structures and by providing a broader and more flexible set of prior specifications across major components of latent variable models.
+
+In particular, BRLVM allows users to independently specify regularization strategies for factor loadings, factor correlations, and residual covariance structures. Multiple shrinkage priors, including lasso, horseshoe, and spike-and-slab priors, can be selected and combined across model components. For factor correlations, the package supports both fully regularized and partially regularized structures, allowing selected correlation blocks to be regularized while others are estimated using conventional covariance priors or fixed according to substantive model specifications.
+
+The computational implementation is written primarily in **C++** and interfaced with R through **Rcpp**, with an **R6-based interface** for model specification, estimation, and posterior summaries. This implementation was developed to support efficient estimation and large-scale simulation studies involving complex latent variable structures.
+
+
+## Key Features
+
+- Applies regularization to all major components of the factor model, including factor loadings, latent factor covariance matrices, and residual covariance matrices, with graphical regularization used for covariance structures when appropriate.  
+
+- Supports partially confirmatory loading specifications through a user-defined design matrix `Q`, enabling structured theoretical constraints alongside regularized estimation.  
+
+- Provides flexible latent factor structure modeling through full or block-specific Inverse-Wishart priors, full or block-specific covariance shrinkage, and partial regularization on selected correlation blocks combined with Inverse-Wishart estimation.  
+
+- Offers multiple shrinkage prior choices for each model component, including Lasso, Horseshoe, and Spike-and-Slab (SSP), with independent user control over prior specification across parameter blocks.  
+- Accommodates multiple latent variable structures, including standard CFA, bifactor models, MTMM models, and testlet effect models within a unified partially confirmatory framework.  
+
+- Supports ordinal indicators, mixed measurement scales, and missing data handling through Bayesian data augmentation.  
+
+These capabilities allow structured theoretical specifications and data-driven shrinkage to coexist within a unified Bayesian framework for latent variable modeling.
+
+
+## Installation
+
+```r
+# install.packages("devtools")
+devtools::install_github("ZhangYifan-Jenny/BRLVM")
+```
+
+Load the package using:
+
+```r
+library(BRLVM)
+```
+
+
+## Getting Started
+
+A detailed tutorial demonstrating model specification, prior selection, estimation, and posterior summaries is available here:
+
+[Getting Started with BRLVM](https://zhangyifan-jenny.github.io/BRLVM/articles/GetStarted.html)
+
+## Thesis and Citation
+
+BRLVM was developed as a principal software implementation of the methodological work presented in **Yifan Zhang's PhD thesis**. Users applying methods implemented in BRLVM are encouraged to cite the thesis and the corresponding methodological publications.
+
+### PhD Thesis
+
+Zhang, Y. (2026). *Bayesian Regularization for Latent Variable Modeling: A Unified Framework and Prior Comparison*. PhD thesis, The University of Hong Kong.
+
+Package-specific citation information is also provided with BRLVM and will be updated as the software continues to develop.
+
+## Related Methodological Work
+
+* Zhang, Y., & Chen, J. (2026). Alternative Bayesian Regularizations for Factor Correlations and Loadings: Lasso, Spike-and-Slab, and Horseshoe. *Structural Equation Modeling: A Multidisciplinary Journal*, 1–19.
+
+* Zhang, Y., & Chen, J. (2024). Accommodating and Extending Various Models for Special Effects Within the Generalized Partially Confirmatory Factor Analysis Framework. *Applied Psychological Measurement, 48*(4–5), 208–229.
+
+* Chen, J. (2020). A partially confirmatory approach to the multidimensional item response theory with the Bayesian lasso. *Psychometrika, 85*(3), 738–774. https://doi.org/10.1007/s11336-020-09724-3
+
+* LAWBL package: https://jinsong-chen.github.io/LAWBL/index.html
+
+
+## Development Status
+
+BRLVM is under active development and is currently intended primarily for research use. This version accompanies the methodological developments presented in Yifan Zhang's PhD thesis and may continue to evolve as additional methods, computational improvements, documentation, and validation studies are developed.

@@ -1,0 +1,42 @@
+Package: BRLVM
+Type: Package
+Title: Bayesian Regularized Latent Variable Modeling
+Version: 0.1.0
+Authors@R: 
+    person(
+        given = "Yifan",
+        family = "Zhang",
+        role = c("aut", "cre", "cph"),
+        email = "zyf2020@connect.hku.hk"
+    )
+Maintainer: Yifan Zhang <zyf2020@connect.hku.hk>
+Description: Implements Bayesian regularization methods for latent variable
+    modeling, with a focus on partially confirmatory latent variable models.
+    The package supports regularization of factor loadings, factor correlation
+    structures, and residual covariance structures using lasso, horseshoe,
+    and spike-and-slab priors. It also supports categorical indicators,
+    missing data, and complex measurement structures, including bifactor,
+    multitrait-multimethod, and testlet models. The package was developed as
+    part of the author's PhD thesis on Bayesian regularization for latent
+    variable modeling.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Imports:
+    R6,
+    Rcpp (>= 1.0.12),
+    MASS,
+    clue,
+    coda,
+    methods
+LinkingTo:
+    Rcpp,
+    RcppArmadillo,
+    RcppEigen
+Suggests:
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+URL: https://github.com/ZhangYifan-Jenny/BRLVM, https://zhangyifan-jenny.github.io/BRLVM/
+BugReports: https://github.com/ZhangYifan-Jenny/BRLVM/issues
+RoxygenNote: 7.3.1

@@ -1,0 +1,15 @@
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/articles/GetStarted.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/reference/BRLVM-package.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/PCLVMthesis-package.html</loc></url>
+<url><loc>/reference/PCPMr.html</loc></url>
+<url><loc>/reference/sim_data.html</loc></url>
+<url><loc>/reference/sim_matrix.html</loc></url>
+<url><loc>/reference/stat.html</loc></url>
+</urlset>
+

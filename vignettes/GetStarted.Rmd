@@ -1,0 +1,303 @@
+---
+title: "Getting Started with BRLVM"
+author: "Yifan Zhang"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting Started with BRLVM}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warning = FALSE,message = FALSE)
+```
+# Introduction
+
+`BRLVM` provides tools for Bayesian regularized latent variable modeling. The package was developed as the software implementation accompanying Yifan Zhang's PhD thesis, *Bayesian Regularization for Latent Variable Modeling: A Unified Framework and Prior Comparison*.
+
+The package builds on the partially confirmatory factor analysis (PCFA) framework and extends it by supporting flexible regularization of factor loadings, factor correlations, and residual covariance structures, together with multiple shrinkage prior choices.
+
+The basic latent variable model is
+
+$$Y = \Lambda F + \varepsilon$$
+where:
+
+* $F \sim N(0, \Phi)$,
+* $\varepsilon \sim N(0, \Psi)$,
+* $\Lambda$ is the factor loading matrix,
+* $\Phi$ is the latent factor covariance matrix, and
+* $\Psi$ is the residual covariance matrix.
+
+## Main Features
+The package supports:
+
+
+* regularized factor loading estimation;
+* partially confirmatory loading structures;
+* regularization of factor correlations;
+* partial regularization of selected factor correlation structures;
+* regularized residual covariance structures and local dependence;
+* lasso, horseshoe, and spike-and-slab shrinkage priors;
+* user-specified combinations of priors across model components;
+* multi-general and multi-specific factor structures;
+* categorical indicators; and
+* missing data.
+
+The examples below demonstrate the main functionality of the package.
+
+# Quick Examples
+
+## 1. Simple CFA Example
+
+### 1.1 Generate a Population Model
+
+We first generate a three-factor population model with six items per factor.
+
+
+```{r}
+library(BRLVM)
+
+truemodel<-sim_matrix(n_specifics=3, items_per_specific=6,loadings_s = c(.7,.7),lac_spe=0.2, cpf_spe=2,specifics_rho = 0.3, seed=123)
+
+cat("Ture Loading is:\n");print( truemodel[["A"]])
+
+cat("True Factor correlation is:\n");print( truemodel[["Phi"]])
+```
+
+### 1.2 Generate Sample Data
+
+We simulate 1,000 observations from the specified population model.
+
+
+```{r}
+truedata <- sim_data( N = 1000,lam = truemodel[["A"]],phi = truemodel[["Phi"]],ecm =truemodel[["ecm"]])
+
+y <- truedata$dat
+J <- nrow(truedata$lam)
+K <- ncol(truedata$lam)
+```
+
+### 1.3 Construct the Design Matrix `Q`
+
+The design matrix `Q` distinguishes specified and unspecified factor loadings:
+
+- `-2` = specified loading;
+- `-1` = unspecified loading subject to regularization.
+
+```{r}
+Q <- matrix(-1, nrow = J, ncol = K)
+Q[truedata$lam != 0] <- -2
+```
+### 1.4 Fit the Model
+
+```{r}
+set.seed(2026)
+m<-PCPMr$new()
+m$pcfa(Y=y, Q=Q,iter =1000, burn = 1000, update = 1000);
+m$pcpmsummary(sig = TRUE)
+```
+
+### 1.5 Detailed Posterior Summaries
+
+Posterior summaries for factor loadings, factor correlations, and residual parameters can also be obtained separately.
+
+```{r}
+A<-stat(classname=m, varName='A',Q = Q, LD = F,med =FALSE,  start = 00,  end = -1,  SL = 0.05,  sig =FALSE)
+C<-stat(classname=m, varName='C',Q = Q, LD = F,med =FALSE,  start = 00,  end = -1,  SL = 0.05,  sig =FALSE)
+V<-stat(classname=m, varName='V',Q = Q, LD = F,med =FALSE,  start = 00,  end = -1,  SL = 0.05,  sig =FALSE)
+
+head(A)
+
+```
+
+### 1.6 User-Specified Shrinkage Prior
+
+The shrinkage prior for unspecified factor loadings is controlled through `reglo`.
+
+Available choices include:
+
+* `"lasso"`: lasso prior;
+* `"horse"`: horseshoe prior;
+* `"ssp"`: spike-and-slab prior.
+
+For example:
+  
+```{r}
+set.seed(2026)
+m1 <- PCPMr$new()
+m1$pcfa(Y=y, Q=Q,reglo = 'ssp',iter =1000, burn = 1000, update = 1000)
+m1$pcpmsummary(sig = TRUE)
+```
+
+## 2. Local Dependence
+
+BRLVM can model local dependence through regularized residual covariance structures.
+
+### 2.1 Generate a Population Model with Local Dependence
+
+```{r}
+truemodel<-sim_matrix(n_specifics=3, items_per_specific=6,loadings_s = c(.7, .7),lac_spe=0.2, cpf_spe=2,specifics_rho = 0.3, ecr = .3,necw=3, necb=3, seed=123)
+truedata<-sim_data(N = 1000, lam =truemodel[["A"]],phi=truemodel[["Phi"]], ecm=truemodel[["ecm"]])
+y<-truedata$dat
+J<-nrow(truedata$lam);K<-ncol(truedata$lam)
+Q <- matrix(-1, nrow = J, ncol = K)
+Q[truedata$lam!=0]=-2
+set.seed(2026)
+m<-PCPMr$new()
+m$pcfa(Y=y, Q=Q,LD=T,iter =1000, burn = 1000, update = 1000);
+m$pcpmsummary(sig=T)
+```
+
+### 2.2 User-Specified Prior for Residual Covariances
+
+When local dependence is included, the shrinkage prior for residual covariance parameters can be specified through `regpsx`.
+
+Available choices include `"lasso"`, `"horse"`, and `"ssp"`.
+
+Different priors can be selected independently for factor loadings and residual covariances. For example:
+
+```{r}
+set.seed(2026)
+m1<-PCPMr$new()
+m1$pcfa(Y=y, Q=Q,LD=T,reglo = 'ssp',regpsx = 'ssp',iter =1000, burn = 1000, update = 1000)
+```
+
+## 3. Categorical Data with Missingness
+
+BRLVM also supports categorical indicators and missing observations.
+
+```{r}
+truemodel<-sim_matrix(n_specifics=3, items_per_specific=6,loadings_s = c(.7, .7),
+                      lac_spe=0.2, cpf_spe=2,specifics_rho = 0.3, seed=123)
+truedata<-sim_data(N = 1000, lam = truemodel[["A"]],phi=truemodel[["Phi"]], ecm=truemodel[["ecm"]],
+                   cati = -1, noc = c(3), misp = 0.05)
+y<-truedata$dat
+J<-nrow(truedata$lam);K<-ncol(truedata$lam)
+Q <- matrix(-1, nrow = J, ncol = K)
+Q[truedata$lam!=0]=-2
+set.seed(2026)
+m<-PCPMr$new()
+m$pcfa(Y=y, Q=Q,cati=T,cati_v=-1,LD=F, iter =1000, burn = 1000, update = 1000);
+m$pcpmsummary(sig=T)
+```
+
+
+## 4. Multi-General and Multi-Specific Factor Models
+
+
+BRLVM can also accommodate models containing multiple general and specific factors.
+
+The following example contains: 2 general factors; 3 specific factors; and 18 observed items.
+
+The factor correlation structure is
+
+$$
+\Phi =
+\begin{pmatrix}
+\Phi_g & 0 \\
+0 & \Phi_s
+\end{pmatrix}
+$$
+
+where:
+
+- $ \Phi_g $ is the correlation matrix of the general factors;
+- $ \Phi_s $ is the correlation matrix of the specific factors; and
+- general and specific factors are uncorrelated.
+
+For this example:
+
+- Correlated general factors: $\operatorname{Cor}(G_1,G_2)=0.6$;
+- Sparse correlation among Special factors: one pair of specific factors has correlation 0.6;
+- all other specific-factor correlations are zero;and
+- all general-specific correlations are zero.
+
+### Generate the Population Model
+
+```{r}
+truemodel<-sim_matrix(n_generals=2, items_per_general=9, n_specifics=3, items_per_specific=6,blocks_spe=3,
+                      loadings_g =  c(.7, .8), loadings_s = c(.5, .6),
+                      generals_rho = 0.6, specifics_rho = 0.6,sparse_spe=1, seed=123) 
+cat("Ture Loading is:\n");print( truemodel[["A"]])
+cat("True Factor correlation is:\n");print( truemodel[["Phi"]])
+truedata<-sim_data(N = 1000, lam = truemodel[["A"]],phi=truemodel[["Phi"]], ecm=truemodel[["ecm"]])
+y<-truedata$dat
+J<-nrow(truedata$lam);K<-ncol(truedata$lam)
+Q <- matrix(-1, nrow = J, ncol = K)
+Q[truedata$lam!=0]=-2
+```
+
+### Method 1: Inverse-Wishart Estimation with Orthogonal Specific Factors
+
+The factor correlation structure can first be controlled through `cor_fac`.
+
+For example:
+```r
+cor_fac = c(1,1,0,0,0)
+```
+
+where:
+
+* `1` indicates that correlations involving the corresponding factor block are estimated using an inverse-Wishart prior;
+* `0` indicates that the corresponding correlations are fixed to zero.
+
+
+Under this specification:
+
+* the two general factors are allowed to correlate;
+* the specific factors are mutually orthogonal; and
+* general-specific correlations are fixed to zero.  
+
+```{r}
+set.seed(2026)
+m<-PCPMr$new()
+m$pcfa(Y=y, Q=Q,cor_fac =c(1,1,0,0,0), sign_check = T,iter =10000, burn = 10000, update = 10000);
+m$pcpmsummary(sig=T)
+```
+
+
+### Method 2:  Partial Regularization of Factor Correlations
+
+BRLVM allows selected parts of the factor correlation structure, typically the correlations among specific factors, to be regularized, while correlations among general factors are estimated using an inverse-Wishart prior.
+
+For the current structure, users can specify:
+
+```r
+regphi = "parlasso" / "parhorse" / regphi = "parssp"
+```
+
+Under this specification:
+
+- General factor correlation → Inverse-Wishart prior  
+- Specific factor correlations → shrinkage prior  
+- General–Specificcorrelations → fixed to zero  
+
+```{r}
+set.seed(2026)
+m1<-PCPMr$new()
+m1$pcfa(Y=y, Q=Q,reglo = 'ssp',regphi = 'parssp',Kg = 2,iter =10000, burn = 10000, update = 10000)
+m1$pcpmsummary(sig=T)    
+```
+
+### Method 3: Full Regularization of Factor Correlations
+
+Factor correlations can alternatively be regularized more broadly using:
+
+```r
+regphi = "lasso" / "horse" / "ssp"
+```
+
+This applies shrinkage to the entire factor covariance matrix (or blocks defined by `cor_fac`).
+
+Such full regularization is typically not recommended for MTMM models with a well-defined theoretical design. Nevertheless, it can be appropriate in CFA settings where the factor correlation structure is believed to be sparse, or when the goal is to identify weak or negligible latent associations.
+
+### Summary of Factor Correlation Options 
+
+| Setting | General Factors | Specific Factors | General–Specific |
+|----------|------------------|------------------|------------------|
+| `regphi=none`,`cor_fac=c(1,1,0,0,0)`  | Inverse-Wishart | Fixed 0 | Fixed 0 |
+| `regphi=parlasso/parhorse/parssp` | Inverse-Wishart | Regularized | Fixed 0 |
+| `regphi=lasso/horse/ssp` | Regularized | Regularized | Regularized |
+
+
+
