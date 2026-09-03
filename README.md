@@ -92,20 +92,13 @@ BRLVM](https://zhangyifan-jenny.github.io/BRLVM/articles/GetStarted.html)
 ## Thesis and Citation
 
 BRLVM was developed as a principal software implementation of the
-methodological work presented in **Yifan Zhang’s PhD thesis**. Users
+methodological work presented in *Yifan Zhang’s PhD thesis*. Users
 applying methods implemented in BRLVM are encouraged to cite the thesis
 and the corresponding methodological publications.
 
-### PhD Thesis
-
-Zhang, Y. (2026). *Bayesian Regularization for Latent Variable Modeling:
-A Unified Framework and Prior Comparison*. PhD thesis, The University of
-Hong Kong.
-
-Package-specific citation information is also provided with BRLVM and
-will be updated as the software continues to develop.
-
-## Related Methodological Work
+- Zhang, Y. (2026). *Bayesian Regularization for Latent Variable
+  Modeling: A Unified Framework and Prior Comparison*. PhD thesis, The
+  University of Hong Kong.
 
 - Zhang, Y., & Chen, J. (2026). Alternative Bayesian Regularizations for
   Factor Correlations and Loadings: Lasso, Spike-and-Slab, and

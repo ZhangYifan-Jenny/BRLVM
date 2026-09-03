@@ -201,8 +201,8 @@ $$
 
 where:
 
-- $ \Phi_g $ is the correlation matrix of the general factors;
-- $ \Phi_s $ is the correlation matrix of the specific factors; and
+- $\Phi_g$ is the correlation matrix of the general factors;
+- $\Phi_s$ is the correlation matrix of the specific factors; and
 - general and specific factors are uncorrelated.
 
 For this example:
