@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "BRLVM: Bayesian Regularized Latent Variable Modeling"
+type: software
+authors:
+  - family-names: "Zhang"
+    given-names: "Yifan"
+version: "0.1.0"
+date-released: "2026-09-02"
+url: "https://github.com/ZhangYifan-Jenny/BRLVM"
+repository-code: "https://github.com/ZhangYifan-Jenny/BRLVM"
