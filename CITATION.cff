@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
+message: "If you use BRLVM, please cite this software and the associated PhD thesis."
 title: "BRLVM: Bayesian Regularized Latent Variable Modeling"
 type: software
 authors:
