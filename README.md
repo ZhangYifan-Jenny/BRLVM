@@ -6,9 +6,6 @@ package for flexible Bayesian regularization of latent variable
 models.The package was developed as the software implementation
 accompanying **Yifan Zhang’s PhD thesis**:
 
-implements Partially Confirmatory Latent Variable Modelling (PCLVM)
-developed for Zhang Yifan’s PhD thesis:
-
 > *Bayesian Regularization for Latent Variable Modeling: A Unified
 > Framework and Prior Comparison* The University of Hong Kong
 
