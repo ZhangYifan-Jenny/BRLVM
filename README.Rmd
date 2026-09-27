@@ -5,10 +5,7 @@ output: github_document
 
 **BRLVM** (Bayesian Regularized Latent Variable Modeling) is an R package for flexible Bayesian regularization of latent variable models.The package was developed as the software implementation accompanying **Yifan Zhang's PhD thesis**:
 
-implements Partially Confirmatory Latent Variable Modelling (PCLVM) developed for Zhang Yifan’s PhD thesis:
-
-> *Bayesian Regularization for Latent Variable Modeling: A Unified Framework and Prior Comparison*
-> The University of Hong Kong
+> *Bayesian Regularization for Latent Variable Modeling: A Unified Framework and Prior Comparison*, The University of Hong Kong
 
 BRLVM builds on the partially confirmatory factor analysis (PCFA) framework implemented in the **LAWBL** package. The original PCFA framework incorporates Bayesian regularization for factor loadings and residual covariance structures. BRLVM extends this framework by introducing regularization of factor correlation structures and by providing a broader and more flexible set of prior specifications across major components of latent variable models.
 
